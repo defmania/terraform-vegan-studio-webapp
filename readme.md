@@ -4,58 +4,81 @@ This repository defines a modular, production-grade infrastructure setup using T
 
 ---
 
-## 📁 Project Structure
+## 📁 Terraform Project Structure
 
-terraform/
-├── modules/
-│   ├── asg/
-│   │   ├── main.tf
-│   │   ├── outputs.tf
-│   │   └── variables.tf
-│   ├── certmanager/
-│   │   ├── main.tf
-│   │   ├── outputs.tf
-│   │   └── variables.tf
-│   ├── elb/
-│   │   ├── main.tf
-│   │   ├── outputs.tf
-│   │   └── variables.tf
-│   ├── iam/
-│   │   ├── main.tf
-│   │   ├── outputs.tf
-│   │   └── variables.tf
-│   ├── route53/
-│   │   ├── main.tf
-│   │   ├── outputs.tf
-│   │   └── variables.tf
-│   ├── rds/
-│   │   ├── main.tf
-│   │   ├── outputs.tf
-│   │   └── variables.tf
-│   ├── s3/
-│   │   ├── main.tf
-│   │   ├── outputs.tf
-│   │   └── variables.tf
-│   ├── sg/
-│   │   ├── main.tf
-│   │   ├── outputs.tf
-│   │   └── variables.tf
-│   ├── tg/
-│   │   ├── main.tf
-│   │   ├── outputs.tf
-│   │   └── variables.tf
-│   └── vpc/
-│       ├── main.tf
-│       ├── outputs.tf
-│       └── variables.tf
-├── templates/
-│   ├── db.php.tpl
-│   └── userdata.sh.tpl
-├── main.tf
-├── outputs.tf
-├── terraform.tf
-└── variables.tf
----
+### Root Directory
+
+- `main.tf` – Calls all modules and data sources
+- `outputs.tf` – Root-level outputs
+- `terraform.tf` – Backend configuration and settings
+- `variables.tf` – Root-level input variables
+
+### Templates
+
+- `templates/db.php.tpl` – PHP template for database connection
+- `templates/userdata.sh.tpl` – Shell script template for EC2 user data
+
+### Modules
+
+#### `modules/asg/` – Auto Scaling Group
+
+- `main.tf` – Launch template, ASG, and scheduling
+- `outputs.tf` – ASG name, Launch Template ID
+- `variables.tf`
+
+#### `modules/certmanager/` – TLS Certificate Management
+
+- `main.tf` – ACM certificate and DNS validation
+- `outputs.tf` – Certificate ARN
+- `variables.tf`
+
+#### `modules/elb/` – Application Load Balancer
+
+- `main.tf` – ALB, HTTP and HTTPS listeners
+- `outputs.tf` – ALB ARN, DNS name, Zone ID
+- `variables.tf`
+
+#### `modules/iam/` – IAM Roles and Policies
+
+- `main.tf` – IAM role, policies, attachments, instance profile
+- `outputs.tf` – Role ARN, Instance Profile name
+- `variables.tf`
+
+#### `modules/route53/` – DNS Records
+
+- `main.tf` – Hosted zone lookup and DNS A record
+- `outputs.tf` – Hosted Zone ID
+- `variables.tf`
+
+#### `modules/rds/` – Relational Database
+
+- `main.tf` – DB subnet group and RDS instance
+- `outputs.tf` – DB endpoint, name, username
+- `variables.tf`
+
+#### `modules/s3/` – S3 Bucket
+
+- `main.tf` – Bucket creation and versioning
+- `outputs.tf` – Bucket ARN, ID, resource reference
+- `variables.tf`
+
+#### `modules/sg/` – Security Groups
+
+- `main.tf` – SGs for ALB, EC2, RDS with ingress/egress rules
+- `outputs.tf` – SG IDs for ALB, EC2, RDS
+- `variables.tf`
+
+#### `modules/tg/` – Target Group
+
+- `main.tf` – Target group for ALB
+- `outputs.tf` – Target Group ARN, name
+- `variables.tf`
+
+#### `modules/vpc/` – Networking
+
+- `main.tf` – VPC, subnets, route tables, NAT gateway, IGW
+- `outputs.tf` – VPC ID, ARN, subnet IDs
+- `variables.tf`
 
 ## 🧱 Module Breakdown
 
