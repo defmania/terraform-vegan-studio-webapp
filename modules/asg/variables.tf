@@ -1,0 +1,13 @@
+variable "vs_asg_name" {}
+variable "desired_capacity" {}
+variable "max_size" {}
+variable "min_size" {}
+variable "subnets" {}
+variable "target_group_arns" {}
+variable "ami_id" {}
+variable "instance_type" {}
+variable "app_security_group" {}
+variable "user_data" {}
+variable "enable_autoscaling" {}
+variable "iam_instance_profile" {}
+variable "key_name" {}

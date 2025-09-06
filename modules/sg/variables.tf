@@ -1,0 +1,11 @@
+variable "vpc_id" {}
+variable "alb_sg_name" {}
+variable "alb_sg_description" {}
+variable "alb_sg_port" {}
+variable "alb_sg_https_port" {}
+variable "ec2_sg_name" {}
+variable "ec2_sg_description" {}
+variable "ec2_sg_port" {}
+variable "data_sg_name" {}
+variable "data_sg_description" {}
+variable "data_sg_port" {}

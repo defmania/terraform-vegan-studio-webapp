@@ -1,0 +1,14 @@
+variable "lb_name" {}
+variable "is_internal" {}
+variable "load_balancer_type" {}
+variable "lb_security_group" {}
+variable "subnets" {}
+variable "lb_listener_port_http" {}
+variable "lb_listener_protocol_http" {}
+variable "lb_listener_default_action_http" {}
+variable "lb_listener_status_code_http" {}
+variable "lb_listener_port_https" {}
+variable "lb_listener_protocol_https" {}
+variable "certificate_arn" {}
+variable "lb_listener_default_action_https" {}
+variable "lb_target_group_arn" {}
