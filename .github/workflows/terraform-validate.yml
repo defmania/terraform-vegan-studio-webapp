@@ -1,0 +1,46 @@
+name: 'Terraform Validation'
+
+on:
+  push:
+    branches: [ '**' ]  # Run on all branches
+    paths:
+      - '**.tf'
+      - '**.tfvars.example'
+  pull_request:
+    paths:
+      - '**.tf'
+      - '**.tfvars.example'
+
+jobs:
+  validate:
+    name: 'Terraform Validation'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: '1.12.0'
+
+    - name: Terraform Format Check
+      id: fmt
+      run: terraform fmt -check -recursive
+
+    - name: Terraform Init
+      id: init
+      run: terraform init -backend=false  # Skip backend initialization for validation
+
+    - name: Terraform Validate
+      id: validate
+      run: terraform validate
+
+    - name: Validation Results
+      if: always()
+      run: |
+        echo "### Terraform Validation Results" >> $GITHUB_STEP_SUMMARY
+        echo "- **Format Check**: ${{ steps.fmt.outcome == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Initialization**: ${{ steps.init.outcome == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Validation**: ${{ steps.validate.outcome == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
