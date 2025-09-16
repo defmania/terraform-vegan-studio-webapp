@@ -1,0 +1,23 @@
+# Example Terraform Variables File
+# Copy this file to terraform.tfvars and fill in your actual values
+# DO NOT commit terraform.tfvars to version control - it contains sensitive data
+
+# S3 bucket name for storing application assets
+# This bucket will be created by Terraform
+bucket_name = "vs-bucket-your-unique-name"
+
+# Database password for RDS MySQL instance
+# Use a strong, secure password
+db_password = "your-secure-database-password"
+
+# The full domain name where your application will be accessible
+# This should match a domain you own and have configured in Route 53
+app_fqdn = "veganstudio.yourdomain.com"
+
+# The Route 53 hosted zone name for your domain
+# This should be the root domain (e.g., if your app is at app.example.com, this should be example.com)
+my_hosted_zone_name = "yourdomain.com"
+
+# EC2 Key Pair name for SSH access to instances
+# This key pair must already exist in your AWS account
+key_pair_name = "your-ec2-key-pair"

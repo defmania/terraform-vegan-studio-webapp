@@ -1,0 +1,122 @@
+name: 'Terraform Security & Validation'
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - '**.tf'
+      - '**.tfvars.example'
+      - '.github/workflows/terraform-*.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - '**.tf'
+      - '**.tfvars.example'
+      - '.github/workflows/terraform-*.yml'
+
+jobs:
+  security-scan:
+    name: 'Security Scan'
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: '1.12.0'
+
+    - name: Run Checkov Security Scan
+      id: checkov
+      uses: bridgecrewio/checkov-action@master
+      with:
+        directory: .
+        framework: terraform
+        output_format: sarif
+        output_file_path: checkov-report.sarif
+        soft_fail: true  # Don't fail the build on security issues
+        
+    - name: Upload Checkov SARIF file
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: checkov-report.sarif
+
+    - name: Run TFLint
+      uses: terraform-linters/setup-tflint@v4
+      with:
+        tflint_version: latest
+        
+    - name: Init TFLint
+      run: tflint --init
+      
+    - name: Run TFLint
+      run: tflint -f compact
+
+    - name: Run Terraform Security
+      uses: aquasecurity/tfsec-action@v1.0.3
+      with:
+        soft_fail: true
+        format: sarif
+        
+    - name: Upload tfsec SARIF file
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: tfsec.sarif
+
+  cost-estimation:
+    name: 'Cost Estimation'
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: '1.12.0'
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Plan for Cost Estimation
+      run: |
+        terraform plan -out=tfplan \
+          -var="db_password=dummy_password_for_cost_estimation" \
+          -var="app_fqdn=example.com" \
+          -var="my_hosted_zone_name=example.com"
+
+    - name: Setup Infracost
+      uses: infracost/actions/setup@v3
+      with:
+        api-key: ${{ secrets.INFRACOST_API_KEY }}
+
+    - name: Generate Infracost cost estimate baseline
+      if: github.event_name == 'pull_request'
+      run: |
+        infracost breakdown --path=tfplan \
+                          --format=json \
+                          --out-file=/tmp/infracost-base.json
+
+    - name: Post Infracost comment
+      if: github.event_name == 'pull_request'
+      run: |
+        infracost comment github --path=/tmp/infracost-base.json \
+                                 --repo=$GITHUB_REPOSITORY \
+                                 --github-token=${{github.token}} \
+                                 --pull-request=${{github.event.number}} \
+                                 --behavior=update

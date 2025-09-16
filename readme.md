@@ -159,9 +159,39 @@ Used as a startup script for EC2 instances, fetched via launch template user dat
 
 ---
 
+## 🚀 CI/CD Pipeline
+
+This repository includes a complete GitHub Actions CI/CD pipeline for automated Terraform deployment:
+
+### 🔄 Workflows
+
+- **Terraform Deploy** (`terraform-deploy.yml`): Handles infrastructure deployment
+- **Security & Validation** (`terraform-security.yml`): Runs security scans and cost estimation
+
+### 🚦 Getting Started with CI/CD
+
+1. **Configure Secrets**: Set up required GitHub repository secrets (see [DEPLOYMENT.md](.github/DEPLOYMENT.md))
+2. **Create Variables File**: Copy `terraform.tfvars.example` to `terraform.tfvars` for local development
+3. **Deploy**: Push to `main` branch or create a pull request to trigger the pipeline
+
+### 📋 Quick Setup
+
+```bash
+# Copy example variables
+cp terraform.tfvars.example terraform.tfvars
+
+# Edit with your values
+nano terraform.tfvars
+
+# Use the helper script for local development
+./scripts/terraform-helper.sh check
+```
+
+For detailed setup instructions, see [📖 DEPLOYMENT.md](.github/DEPLOYMENT.md)
+
 ## 🧠 Next Steps
 
-- Add CI/CD integration for automated Terraform deployment
+- ✅ CI/CD integration for automated Terraform deployment
 - Implement Secrets Manager for secure DB credential injection
 - Extend ASG with rolling updates or blue/green deployment logic
 
